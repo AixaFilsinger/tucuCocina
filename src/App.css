@@ -8,3 +8,9 @@
 .navbar-menu{
     background-color:#48120E;
 }
+.form-registro{
+    border: 1px solid #48120E;
+    
+    margin: 1rem;
+    padding: 3rem;
+}
