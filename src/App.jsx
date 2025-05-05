@@ -6,6 +6,7 @@ import Login from './components/views/Login';
 import DetalleReceta from './components/views/Receta/DetalleReceta';
 import UsuarioHome from './components/views/UsuarioHome';
 import CardHomeReceta from './components/views/receta/CardHomeReceta';
+import EditarCrear from './components/views/receta/EditarCrear';
 
 function App() {
   
@@ -13,7 +14,7 @@ function App() {
   return (
     <>
       <Menu></Menu>
-      <UsuarioHome></UsuarioHome>
+      <EditarCrear></EditarCrear>
     </>
   )
 }
