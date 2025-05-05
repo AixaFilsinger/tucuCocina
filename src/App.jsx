@@ -13,7 +13,7 @@ function App() {
   return (
     <>
       <Menu></Menu>
-      <CardHomeReceta></CardHomeReceta>
+      <UsuarioHome></UsuarioHome>
     </>
   )
 }
