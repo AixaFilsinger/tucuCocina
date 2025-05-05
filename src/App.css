@@ -4,6 +4,10 @@
     min-height: 100vh;
     background-color: #f8f3e6;
 }
+.mainSection{
+    flex-grow: 1;
+    
+}
 
 .navbar-menu{
     background-color:#48120E;
@@ -13,5 +17,8 @@
     
     margin: 1rem;
     padding: 3rem;
+}
+.cardReceta{
+    width: 18rem;
 }
 
