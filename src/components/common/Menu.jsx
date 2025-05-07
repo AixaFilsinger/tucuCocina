@@ -1,19 +1,48 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
-const Menu = () => {
+import Swal from "sweetalert2";
+import { Button } from 'react-bootstrap';
+const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
+  const navegacion = useNavigate();
+  const cerrarSesion = () => {
+    //borrar del local
+    localStorage.removeItem("usuario");
+    setUsuarioLogueado({});
+    navegacion("/");
+    Swal.fire(
+      'Sesión cerrada con exito!',
+      'Usted cerro sesión correctamente',
+      'success'
+    )
+  };
     return (
         <Navbar expand="lg" className=" navbar-menu">
       <Container>
-        <Navbar.Brand href="#home" className='text-light'>TucuCocina</Navbar.Brand>
+        <Navbar.Brand as={Link} to={'/'} className='text-light'>TucuCocina</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link href="#home" className='text-light'>Inicio</Nav.Link>
-            <Nav.Link href="#link" className='text-light'>Recetas</Nav.Link>
-            <Nav.Link href="#link" className='text-light'>Iniciar Sesion</Nav.Link>
-            <Nav.Link href="#link" className='text-light'>Registrarse</Nav.Link>
-            
+          <NavLink end className="nav-item nav-link text-light" to={"/"}>
+              Inicio
+            </NavLink>
+          
+          <NavLink end className="nav-item nav-link text-light" to={"/registrarse"}>
+              Registrarse
+            </NavLink>
+            {usuarioLogueado.email ? (
+              <>
+
+          <NavLink end className="nav-item nav-link text-light" to={`/usuario`}>
+              Usuario
+            </NavLink>
+            <Button variant="secondary" onClick={cerrarSesion}>Cerrar sesión</Button>
+              </>
+            ) : (
+              <NavLink end className="nav-item nav-link text-light" to={"/login"}>
+              Login
+            </NavLink> )}
           </Nav>
         </Navbar.Collapse>
       </Container>
