@@ -1,23 +1,52 @@
 import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-const EditarCrear = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-      } = useForm();
-    return (
-        <section className="mainSection container p-5">
-            <h2 className="text-center">Titulo</h2>
-            <hr className="mx-5" />
-            <Form>
+import Swal from "sweetalert2";
+import { consultaCrearReceta } from "../../helpers/queries";
+const CrearReceta = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const onSubmit = (recetaNueva) => {
+    //realizar la peticion que agregue la receta a la API
+    consultaCrearReceta(recetaNueva).then((respuesta) => {
+      console.log(respuesta);
+      if (
+        respuesta &&
+        respuesta.message === "Ya existe una receta con ese título"
+      ) {
+        Swal.fire("Error", "Ya existe una receta con ese título", "error");
+      } else if (respuesta && respuesta.id) {
+        Swal.fire(
+          "Receta Creada",
+          `La receta ${recetaNueva.titulo} fue creada`,
+          "success"
+        );
+        reset();
+      } else {
+        Swal.fire(
+          "Error",
+          `Intente realizar esta operacion mas tarde`,
+          "error"
+        );
+      }
+    });
+    reset();
+  };
+  return (
+    <section className="mainSection container p-5">
+      <h2 className="text-center">Crear Receta</h2>
+      <hr className="mx-5" />
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="formTituloReceta">
           <Form.Label>Titulo Receta</Form.Label>
           <Form.Control
             type="text"
             placeholder="Ej: Cafe"
-            {...register("tituloReceta", {
+            {...register("titulo", {
               required: "El titulo de la Receta es obligatorio",
               minLength: {
                 value: 2,
@@ -30,7 +59,7 @@ const EditarCrear = () => {
             })}
           />
           <Form.Text className="text-danger">
-            {errors.tituloReceta?.message}
+            {errors.titulo?.message}
           </Form.Text>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formPorciones">
@@ -78,20 +107,19 @@ const EditarCrear = () => {
         <Form.Group className="mb-3" controlId="formImagen">
           <Form.Label>Imagen</Form.Label>
           <Form.Control
-            type="file"
-            
-            accept="image/*"
+            type="text"
+            placeholder="Ej: https://www.clarin.com/img/2013/10/13/las-medialunas-un-clasico-que___r1mfUtu3mg_1256x620.jpg"
             {...register("imagen", {
-              required: "La imagen es obligatoria",
-              validate: {
-                tipo: (value) =>
-                  value[0] && value[0].type.startsWith("image/")
-                    ? true
-                    : "Solo se permiten imágenes",
-                tamano: (value) =>
-                  value[0] && value[0].size < 2 * 1024 * 1024
-                    ? true
-                    : "La imagen debe pesar menos de 2MB",
+              required:
+                "La URL de la Imagen es obligatoria y debe terminar con .jpg/.png/.svg",
+              minLength: {
+                value: 1,
+                message:
+                  "El precio del Producto debe contener como mínimo 2 digitos (mínimo 50)",
+              },
+              pattern: {
+                value: /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|png|svg)$/,
+                message: "La URL de la Imagen debe terminar con .jpg/.png/.svg",
               },
             })}
           />
@@ -99,6 +127,40 @@ const EditarCrear = () => {
             {errors.imagen?.message}
           </Form.Text>
         </Form.Group>
+        <Form.Group className="mb-3" controlId="formDescripcion">
+          <Form.Label>Descripción</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            placeholder="Ej: Una receta fácil y rica"
+            {...register("descripcion", {
+              required: "La descripción es obligatoria",
+              minLength: {
+                value: 5,
+                message: "La descripción debe tener al menos 5 caracteres",
+              },
+            })}
+          />
+          <Form.Text className="text-danger">
+            {errors.descripcion?.message}
+          </Form.Text>
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formIngredientes">
+          <Form.Label>Ingredientes</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            placeholder="Ej: Harina, huevos, leche..."
+            {...register("ingredientes", {
+              required: "Los ingredientes son obligatorios",
+            })}
+          />
+          <Form.Text className="text-danger">
+            {errors.ingredientes?.message}
+          </Form.Text>
+        </Form.Group>
+
         <Form.Group className="mb-3" controlId="formCategoria">
           <Form.Label>Categoria</Form.Label>
           <Form.Select
@@ -114,7 +176,6 @@ const EditarCrear = () => {
           </Form.Select>
           <Form.Text className="text-danger">
             {errors.categoria?.message}
-            
           </Form.Text>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formDificultad">
@@ -128,22 +189,17 @@ const EditarCrear = () => {
             <option value="alta">Alta</option>
             <option value="media">Media</option>
             <option value="baja">Baja</option>
-            
           </Form.Select>
           <Form.Text className="text-danger">
             {errors.categoria?.message}
-            
           </Form.Text>
         </Form.Group>
         <Button variant="primary" type="submit">
           Guardar
         </Button>
       </Form>
-
-
-            
-        </section>
-    );
+    </section>
+  );
 };
 
-export default EditarCrear;
+export default CrearReceta;
